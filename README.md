@@ -43,6 +43,9 @@ Employee Management System (EMS) is a web-based system designed to efficiently m
 ![Sign In](/asset/images/screen-shot/sign_in.png)
 ![Forget Password](/asset/images/screen-shot/forgetPassword.png)
 ![Reset Password](/asset/images/screen-shot/resetPassword.png)
+![Update working hours](/asset/images/screen-shot/update_working_hours.png)
+
+!
 
 ## Setup
 1. Clone the repository: `git clone https://github.com/your-username/GymSystem.git`
