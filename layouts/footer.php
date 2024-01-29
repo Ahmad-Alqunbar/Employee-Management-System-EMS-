@@ -23,7 +23,24 @@ $(document).ready(()=>{
    });
 });
 
-        </script>
+
+// Reload the page every 10 minutes (600,000 milliseconds)
+setInterval(function() {
+    // Use jQuery to load the current page content without a full refresh
+    $.ajax({
+        url: window.location.href,
+        type: 'GET',
+        success: function(data) {
+            // Replace the current page content with the updated content
+            $('body').html(data);
+        },
+        error: function(error) {
+            console.log('Error reloading page:', error);
+        }
+    });
+}, 100000); // 600,000 milliseconds = 10 minutes
+</script>
+
 </body>
 
 </html>
