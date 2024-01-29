@@ -55,6 +55,7 @@ $today = date('Y-m-d');
                                 <th>Duration</th>
                                 <th>Date</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -78,6 +79,10 @@ $today = date('Y-m-d');
                                         <?php
                                         }
                                         ?>
+                                    </td>
+                                    <td>
+                                        <a href="update_user_vacation.php?id=<?= $user['id'] ?>&vacation_id=<?= $user['vacation_id'] ?>&created_at=<?= $user['created_at'] ?>" class="btn btn-sm btn-color">Update</a>
+                                        <button class="btn btn-sm btn-danger" onclick="confirmDelete(<?= $user['id'] ?>, <?= $user['vacation_id'] ?>)">Delete</button>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -147,6 +152,32 @@ $today = date('Y-m-d');
             }
         });
     }
+
+    function confirmDelete(userId, vacationId) {
+        if (confirm('Are you sure you want to delete this vacation?')) {
+            $.ajax({
+                url: 'delete_user_vacation.php',
+                type: 'POST',
+                data: {
+                    user_id: userId,
+                    vacation_id: vacationId
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (data.trim() === 'vacation deleted successfully!') {
+                        alert('Vacation deleted successfully!');
+                        location.reload(); // Reload the page after deletion
+                    } else {
+                        console.log('Unexpected response from the server:', data);
+                    }
+                },
+                error: function(error) {
+                    console.log(error.responseText);
+                }
+            });
+        }
+    }
+
 </script>
 <?php
 include_once 'layouts/footer.php';
