@@ -44,8 +44,11 @@ $user = $result->fetch_assoc();
                 <h4>Update User Working Hours</h4>
             </div>
             <div class="card-body">
+                  <h6>User Name : <?=$_GET['Name'] ?></h6>
+ 
                 <form method="post" action="">
                     <!-- Add hidden fields for id_working_hours and date_of_day -->
+
                     <input type="hidden" name="id_working_hours" value="<?= $id_working_hours ?>">
                     <input type="hidden" name="date_of_day" value="<?= $date_of_day ?>">
 

@@ -49,7 +49,7 @@ Employee Management System (EMS) is a web-based system designed to efficiently m
 ![Delete Vacation ](/asset/images/screen-shot/delete_vacation.png)
 
 ## Setup
-1. Clone the repository: `git clone https://github.com/your-username/GymSystem.git`
+1. Clone the repository: `git clone https://github.com/Ahmad-Alqunbar/Employee-Management-System-EMS-.git`
 2. Configure the database: Update `config/Database.php` with your database credentials.
 3. Import the database schema: Run the SQL script provided in `database.sql`.
 

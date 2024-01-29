@@ -56,7 +56,7 @@ $today=date('Y-m-d');
                                     <td><?= $user['end_time'] ?></td>
                                     <td><?= $user['duration'] ?></td>
                                     <td><?= $user['date_of_day'] ?></td>
-                                    <td><a href="update_user_working_hours.php?id=<?= $user['id'] ?>&user_id=<?= $user['user_id'] ?>&date_of_day=<?= $user['date_of_day'] ?>"class="btn btn-sm btn-color">update</a></td>
+                                    <td><a href="update_user_working_hours.php?id=<?= $user['id'] ?>&user_id=<?= $user['user_id'] ?>&date_of_day=<?= $user['date_of_day'] ?>&Name=<?= $user['name'] ?>"class="btn btn-sm btn-color">update</a></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
