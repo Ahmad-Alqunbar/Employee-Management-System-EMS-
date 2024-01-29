@@ -13,8 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $newVacationTo = $_POST['new_vacation_to'];
 
     // Add validation if needed
+    $durationInDays=calculateDuration($newVacationFrom,$newVacationTo);
 
-    $updateQuery = "UPDATE vacation SET vacation_from = '$newVacationFrom', vacation_to = '$newVacationTo' WHERE user_id = $userId AND id = $vacationId";
+    $updateQuery = "UPDATE vacation SET vacation_from = '$newVacationFrom', vacation_to = '$newVacationTo',duration='$durationInDays' WHERE user_id = $userId AND id = $vacationId";
     $conn->query($updateQuery);
 
     // Redirect back to the vacation list page
@@ -22,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 
-// Fetch the user's current vacation details based on the ID from the URL
 $userId = $_GET['id'];
 $vacationId = $_GET['vacation_id'];
 
@@ -60,5 +60,17 @@ $userVacation = $result->fetch_assoc();
 </main>
 
 <?php
+function calculateDuration($fromDate, $toDate) {
+    // Parse the date strings to DateTime objects
+    $fromDateObj = new DateTime($fromDate);
+    $toDateObj = new DateTime($toDate);
+
+    // Calculate the duration in days
+    $interval = $toDateObj->diff($fromDateObj);
+    $durationInDays = $interval->days;
+
+    // Add 1 to include both the start and end dates
+    return $durationInDays + 1;
+}
 include_once 'layouts/footer.php';
 ?>

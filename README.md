@@ -23,6 +23,7 @@ Employee Management System (EMS) is a web-based system designed to efficiently m
 - MySQL
 - jQuery
 - HTML5
+-PHPMailer
 
 
 ## Features

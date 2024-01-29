@@ -58,6 +58,8 @@ $today = date('Y-m-d');
                                 <th>Duration</th>
                                 <th>Leaving Date</th>
                                 <th>Status</th>
+                                <th>Action</th> 
+                                
                             </tr>
                         </thead>
                         <tbody>
@@ -81,6 +83,12 @@ $today = date('Y-m-d');
                                         <?php
                                         }
                                         ?>
+                                    </td> 
+                                    <td>
+                                    <a href="update_user_leaving.php?id=<?= $user['id'] ?> & leave_id=<?= $user['leave_id'] ?> & leaving_date=<?= $user['leaving_date'] ?>" class="btn btn-sm btn-color">Update</a>
+
+                                    <button class="btn btn-sm btn-danger" onclick="confirmDeleteLeave(<?= $user['id'] ?>, <?= $user['leave_id'] ?>)">Delete</button>
+
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -146,6 +154,34 @@ function acceptLeave(leaveId) {
         }
     });
 }
+function confirmDeleteLeave(userId, leaveId) {
+        if (confirm('Are you sure you want to delete this leaving request?')) {
+            deleteLeave(userId, leaveId);
+        }
+    }
+
+    function deleteLeave(userId, leaveId) {
+        $.ajax({
+            url: 'delete_user_leaving.php',
+            type: 'POST',
+            data: {
+                user_id: userId,
+                leave_id: leaveId
+            },
+            success: function(data) {
+                console.log(data);
+                if (data.trim() === 'leave deleted successfully!') {
+                    alert('Leaving request deleted successfully!');
+                    location.reload();
+                } else {
+                    console.log('Unexpected response from the server:', data);
+                }
+            },
+            error: function(error) {
+                console.log(error.responseText);
+            }
+        });
+    }
 
 
 
