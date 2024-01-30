@@ -54,6 +54,7 @@ $today = date('Y-m-d');
                                 <th>Phone</th>
                                 <th>Is Logged In</th>
                                 <th>Activation</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,6 +84,10 @@ $today = date('Y-m-d');
                                        }
                                         ?>
                                     </td> 
+                                     <td>
+                                      <a href="update_user.php?id=<?= $user['id'] ?>" class="btn btn-sm btn-color">Update</a>
+                                      <button class="btn btn-sm btn-danger" onclick="confirmDelete(<?= $user['id'] ?>)">Delete</button>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -148,7 +153,29 @@ function activateUser(userId) {
     });
 }
 
-
+function confirmDelete(userId) {
+        if (confirm('Are you sure you want to delete this user?')) {
+            $.ajax({
+                url: 'delete_user.php',
+                type: 'POST',
+                data: {
+                    user_id: userId
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (data.trim() === 'user deleted successfully!') {
+                        alert('User deleted successfully!');
+                        location.reload(); // Reload the page after deletion
+                    } else {
+                        console.log('Unexpected response from the server:', data);
+                    }
+                },
+                error: function(error) {
+                    console.log(error.responseText);
+                }
+            });
+        }
+    }
 
 </script>
 
