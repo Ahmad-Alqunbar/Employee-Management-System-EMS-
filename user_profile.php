@@ -118,8 +118,9 @@ $stmt->close();
         <div class="card-body">
             <h5 class="card-title"></h5>
 
-            <table class="table">
-                <tr>
+            <div class="table-responsive">
+                 <table class="table align-middle">
+                    <tr>
 
                     <th>
                         Name
@@ -142,6 +143,7 @@ $stmt->close();
                 </tr>
 
             </table>
+            </div>
         </div>
         <div class="card-footer text-muted">
             <p class="card-text">Elapsed Time: <span id="elapsed-time"></span></p>
@@ -198,13 +200,25 @@ $stmt->close();
     startTimer();
 
     function submitRequest(type) {
-        let leaving_date = $('#'+type+'_date').val();
-        let leaving_from = $('#'+type+'_from').val();
-        let leaving_to = $('#'+type+'_to').val();
+        let leaving_date = $('#' + type + '_date').val();
+        let leaving_from = $('#' + type + '_from').val();
+        let leaving_to = $('#' + type + '_to').val();
 
         // Validate the form data
         if (!leaving_date || !leaving_from || !leaving_to) {
             alert('Please fill in all fields.');
+            return;
+        }
+
+        // Additional validations
+        let today = new Date().toISOString().split('T')[0];
+        if (leaving_date < today) {
+            alert('Leaving date cannot be in the past.');
+            return;
+        }
+
+        if (leaving_from >= leaving_to) {
+            alert('Leave time "From" should be before "To".');
             return;
         }
 
@@ -218,13 +232,13 @@ $stmt->close();
                 leaving_from: leaving_from,
                 leaving_to: leaving_to
             },
-            success: function(response) {
+            success: function (response) {
                 // Handle the response, e.g., show a success message
                 console.log(response);
                 // Optionally close the modal
-                $('#'+type).modal('hide');
+                $('#' + type).modal('hide');
             },
-            error: function(error) {
+            error: function (error) {
                 // Handle errors, e.g., show an error message
                 console.error(error.responseText);
             }
@@ -233,43 +247,56 @@ $stmt->close();
 
 
 
+
    // Attach a click event to the "Submit" button in the vacation modal
    function submitVacationRequest() {
-  let vacationFrom = $('#vacation_from').val();
-  let vacationTo = $('#vacation_to').val();
-  let reasonVacation = $('#reason_vacation').val();
+        let vacationFrom = $('#vacation_from').val();
+        let vacationTo = $('#vacation_to').val();
+        let reasonVacation = $('#reason_vacation').val();
 
-  // Validate the form data
-  if (!vacationFrom || !vacationTo || !reasonVacation) {
-    alert('Please fill in all fields.');
-    return;
-  }
+        // Validate the form data
+        if (!vacationFrom || !vacationTo || !reasonVacation) {
+            alert('Please fill in all fields.');
+            return;
+        }
 
-  // Calculate duration
-  let duration = calculateDuration(vacationFrom, vacationTo);
+        // Additional validations
+        let today = new Date().toISOString().split('T')[0];
+        if (vacationFrom < today || vacationTo < today) {
+            alert('Vacation dates cannot be in the past.');
+            return;
+        }
 
-  // AJAX request to insert data
-  $.ajax({
-    url: 'insert_vacation.php', // Adjust the URL to your server-side script
-    method: 'POST',
-    data: {
-      vacation_from: vacationFrom,
-      vacation_to: vacationTo,
-      duration: duration,
-      reason_vacation: reasonVacation
-    },
-    success: function (response) {
-      // Handle the response, e.g., show a success message
-      console.log(response);
-      // Optionally close the modal
-      $('#vacation').modal('hide');
-    },
-    error: function (error) {
-      // Handle errors, e.g., show an error message
-      console.error(error.responseText);
+        if (vacationFrom >= vacationTo) {
+            alert('Vacation "From" date should be before "To" date.');
+            return;
+        }
+
+        // Calculate duration
+        let duration = calculateDuration(vacationFrom, vacationTo);
+
+        // AJAX request to insert data
+        $.ajax({
+            url: 'insert_vacation.php', // Adjust the URL to your server-side script
+            method: 'POST',
+            data: {
+                vacation_from: vacationFrom,
+                vacation_to: vacationTo,
+                duration: duration,
+                reason_vacation: reasonVacation
+            },
+            success: function (response) {
+                // Handle the response, e.g., show a success message
+                console.log(response);
+                // Optionally close the modal
+                $('#vacation').modal('hide');
+            },
+            error: function (error) {
+                // Handle errors, e.g., show an error message
+                console.error(error.responseText);
+            }
+        });
     }
-  });
-}
 
 function calculateDuration(fromDate, toDate) {
   // Parse the date strings to Date objects
