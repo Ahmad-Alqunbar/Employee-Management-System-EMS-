@@ -24,9 +24,8 @@ $(document).ready(()=>{
 });
 
 
-// Reload the page every 10 minutes (600,000 milliseconds)
+// Reload the page every 2 minutes 
 setInterval(function() {
-    // Use jQuery to load the current page content without a full refresh
     $.ajax({
         url: window.location.href,
         type: 'GET',
@@ -39,8 +38,23 @@ setInterval(function() {
         }
     });
 }, 100000); // 600,000 milliseconds = 10 minutes
-</script>
 
+  let inactivityTimeout;
+
+  function resetInactivityTimeout() {
+    clearTimeout(inactivityTimeout);
+
+    inactivityTimeout = setTimeout(function () {
+      // Redirect to logout page or perform logout action
+      window.location.href = 'logout.php';
+    }, 1 * 60 * 60 * 1000); // 2 hours in milliseconds
+  }
+  // Attach this event to any activity on the page (mousemove, keydown)
+  document.addEventListener('mousemove', resetInactivityTimeout);
+  document.addEventListener('keydown', resetInactivityTimeout);
+  // Start the inactivity timeout on page load
+  resetInactivityTimeout();
+</script>
 </body>
 
 </html>
