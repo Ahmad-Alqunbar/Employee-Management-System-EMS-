@@ -46,7 +46,7 @@ $user = $result->fetch_assoc();
             <div class="card-body">
                   <h6>User Name : <?=$_GET['Name'] ?></h6>
  
-                <form method="post" action="">
+                  <form method="post" action="" onsubmit="return validateForm();">
                     <!-- Add hidden fields for id_working_hours and date_of_day -->
 
                     <input type="hidden" name="id_working_hours" value="<?= $id_working_hours ?>">
@@ -71,3 +71,21 @@ $user = $result->fetch_assoc();
 <?php
 include_once 'layouts/footer.php';
 ?>
+<script>
+    function validateForm() {
+        var startTime = document.getElementById('start_time').value;
+        var endTime = document.getElementById('end_time').value;
+
+        // Parse the time strings to Date objects
+        var startDate = new Date('2000-01-01T' + startTime);
+        var endDate = new Date('2000-01-01T' + endTime);
+
+        // Compare the times
+        if (startDate >= endDate) {
+            alert('Arrival time should be before Leave time.');
+            return false;
+        }
+
+        return true;
+    }
+</script>

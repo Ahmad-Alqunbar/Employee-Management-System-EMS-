@@ -46,7 +46,7 @@ $leave = $result->fetch_assoc();
                 <h4>Update Leaving Request</h4>
             </div>
             <div class="card-body">
-                <form method="post" action="">
+            <form method="post" action="" onsubmit="return validateForm();">
                     <div class="form-group">
                         <label for="leaving_from">Leaving From:</label>
                         <input type="time" class="form-control" id="leaving_from" name="leaving_from" value="<?= date('H:i', strtotime($leave['leaving_from'])) ?>">
@@ -71,3 +71,22 @@ $leave = $result->fetch_assoc();
 <?php
 include_once 'layouts/footer.php';
 ?>
+<script>
+    function validateForm() {
+        var leavingFrom = document.getElementById('leaving_from').value;
+        var leavingTo = document.getElementById('leaving_to').value;
+
+        // Parse the time strings to Date objects
+        var startTime = new Date('1970-01-01T' + leavingFrom + 'Z');
+        var endTime = new Date('1970-01-01T' + leavingTo + 'Z');
+
+        // Compare the times
+        if (startTime >= endTime) {
+            alert('Leaving From time should be before Leaving To time.');
+            return false;
+        }
+
+        return true;
+    }
+</script>
+

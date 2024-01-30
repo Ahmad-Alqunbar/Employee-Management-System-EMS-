@@ -41,7 +41,7 @@ $userVacation = $result->fetch_assoc();
                 <h4>Update Vacation</h4>
             </div>
             <div class="card-body">
-                <form method="post" action="">
+            <form method="post" action="" onsubmit="return validateForm();">
                     <div class="form-group">
                         <label for="new_vacation_from">Vacation From:</label>
                         <input type="date" class="form-control" id="new_vacation_from" name="new_vacation_from" value="<?= $userVacation['vacation_from'] ?>">
@@ -74,3 +74,21 @@ function calculateDuration($fromDate, $toDate) {
 }
 include_once 'layouts/footer.php';
 ?>
+<script>
+    function validateForm() {
+        var newVacationFrom = document.getElementById('new_vacation_from').value;
+        var newVacationTo = document.getElementById('new_vacation_to').value;
+
+        // Parse the date strings to Date objects
+        var startDate = new Date(newVacationFrom);
+        var endDate = new Date(newVacationTo);
+
+        // Compare the dates
+        if (startDate >= endDate) {
+            alert('Vacation From date should be before Vacation To date.');
+            return false;
+        }
+
+        return true;
+    }
+</script>
