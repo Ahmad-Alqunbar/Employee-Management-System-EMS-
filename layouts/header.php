@@ -91,7 +91,7 @@ if (!$isLoggedIn || $userRole !== 1) {
               </button>
               <div class="collapse" id="reports" data-parent="#sidebar">
                 <div class="list-group">
-                  <a href="../reports/reports.php" class="list-group-item list-group-item-action border-0 pl-5">Reports</a>
+                  <a href="reports.php" class="list-group-item list-group-item-action border-0 pl-5">Reports</a>
 
                 </div>
               </div>

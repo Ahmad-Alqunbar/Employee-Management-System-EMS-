@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (password_verify($password, $hashed_password)) {
             if ($active == 1) {
                 // Check if the user is already logged in
-                if ($is_logged_in) {
+                if ($is_logged_in==1) {
                     $error_message = "User is already logged in.";
                 } else {
                     // Mark the user as logged in
