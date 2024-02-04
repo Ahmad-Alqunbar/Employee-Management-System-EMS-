@@ -91,7 +91,9 @@ if (!$isLoggedIn || $userRole !== 1) {
               </button>
               <div class="collapse" id="reports" data-parent="#sidebar">
                 <div class="list-group">
-                  <a href="reports.php" class="list-group-item list-group-item-action border-0 pl-5">Reports</a>
+                  <a href="report_leave.php" class="list-group-item list-group-item-action border-0 pl-5">Leave Reports</a>
+                  <a href="vacation_report.php" class="list-group-item list-group-item-action border-0 pl-5">Vacation Reports</a>
+                  <a href="working_hours_reports.php" class="list-group-item list-group-item-action border-0 pl-5">Working Hours Reports</a>
 
                 </div>
               </div>
@@ -105,7 +107,7 @@ if (!$isLoggedIn || $userRole !== 1) {
               </button>
               <div class="collapse" id="settings" data-parent="#sidebar">
                 <div class="list-group">
-                  <a href="../settings/settings.php" class="list-group-item list-group-item-action border-0 pl-5">settings</a>
+                  <a href="#" class="list-group-item list-group-item-action border-0 pl-5">settings</a>
 
                 </div>
               </div>
