@@ -20,10 +20,11 @@ $selectedUsers = is_array($selectedUsers) ? $selectedUsers : [$selectedUsers];
 $isSearchConditionsSet = false;
 
 // Build the SQL query based on search parameters
-$sql = "SELECT users.id as user_id, users.name as user_name, SUM(working_hours.duration) as total_duration
+$sql = "SELECT users.id as user_id, users.name as user_name, TIME_FORMAT(SEC_TO_TIME(SUM(time_to_sec(working_hours.duration))), '%H:%i') AS total_duration
         FROM working_hours 
         LEFT JOIN users ON working_hours.user_id = users.id 
-        WHERE role_id=0 AND active=1";
+        WHERE role_id = 0 AND active = 1";
+
 
 $paramTypes = "";
 $bindParams = [];
@@ -42,12 +43,9 @@ if (!empty($dateTo)) {
     $isSearchConditionsSet = true;
 }
 
-if (is_array($selectedUsers)) {
-    // Convert each element to an integer
-    $selectedUsers = array_map('intval', $selectedUsers);
-
-    $placeholders = implode(',', array_fill(0, count($selectedUsers), '?'));
-    $sql .= " AND working_hours.user_id IN ($placeholders)";
+if (!empty($selectedUsers)) {
+    $userConditions = implode(',', array_fill(0, count($selectedUsers), '?'));
+    $sql .= " AND working_hours.user_id IN ($userConditions)";
     $paramTypes .= str_repeat("i", count($selectedUsers));
     $bindParams = array_merge($bindParams, $selectedUsers);
 } else {
@@ -101,13 +99,13 @@ $stmt->close();
                         <div class="col-md-3 mb-3">
                             <div class="form-group">
                                 <label for="searchDropdown">Date From</label>
-                                <input type="date" class="form-control" name="date_from" id="date_from">
+                                <input type="date" class="form-control" name="date_from" id="date_from" value="<?php echo isset($_GET['date_from']) ? $_GET['date_from'] : ''; ?>">
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
                             <div class="form-group">
                                 <label for="searchDropdown">Date To</label>
-                                <input type="date" class="form-control" name="date_to" id="date_to">
+                                <input type="date" class="form-control" name="date_to" id="date_to" value="<?php echo isset($_GET['date_to']) ? $_GET['date_to'] : ''; ?>">
                             </div>
                         </div>
 
@@ -115,14 +113,14 @@ $stmt->close();
                         <div class="col-md-6 mb-3">
                             <label for="searchInput">Choose the Users</label>
                             <div class="form-group d-flex justify-content-around">
-                                <select id="select2" class="form-control mr-2" name="selectedUser[]" id="userDropdown"
-                                    multiple="multiple">
-                                    <?php
-                                    foreach ($users as $user) {
-                                        echo "<option value='{$user['id']}'>{$user['name']}</option>";
-                                    }
-                                    ?>
-                                </select>
+                            <select id="select2" class="form-control mr-2" name="selectedUser[]" id="userDropdown" multiple="multiple">
+                            <?php
+                            foreach ($users as $user) {
+                                $isSelected = isset($_GET['selectedUser']) && in_array($user['id'], $_GET['selectedUser']);
+                                echo "<option value='{$user['id']}' " . ($isSelected ? 'selected' : '') . ">{$user['name']}</option>";
+                            }
+                            ?>
+                        </select>
                                 <button class="btn btn-color" type="submit">Search</button>
                             </div>
                         </div>
@@ -130,40 +128,40 @@ $stmt->close();
                 </form>
                 <!-- Display search results or content here -->
                 <?php if ($isSearchConditionsSet && $result && $result->num_rows > 0) {
-    echo "<div class='mt-4'>";
-    echo "<h5>Search Results:</h5>";
-    echo "<div class='table-responsive'>";
-    echo "<table class='table table-bordered'>";
-    echo "<thead>";
-    echo "<tr>";
-    echo "<th>User</th>";
-    echo "<th>Total Duration</th>";
-    echo "</tr>";
-    echo "</thead>";
-    echo "<tbody>";
+                    echo "<div class='mt-4'>";
+                    echo "<h5>Search Results:</h5>";
+                    echo "<div class='table-responsive'>";
+                    echo "<table class='table table-bordered'>";
+                    echo "<thead>";
+                    echo "<tr>";
+                    echo "<th>User</th>";
+                    echo "<th>Total Duration</th>";
+                    echo "</tr>";
+                    echo "</thead>";
+                    echo "<tbody>";
 
-    while ($row = $result->fetch_assoc()) {
-        echo "<tr>";
-        echo "<td>{$row['user_name']}</td>";
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td>{$row['user_name']}</td>";
 
-        // Convert total duration from minutes to time format (HH:MM)
-        $totalDurationHours = floor($row['total_duration'] / 60);
-        $totalDurationMinutes = $row['total_duration'] % 60;
-        $formattedTotalDuration = gmdate("H:i:s", mktime($totalDurationHours, $totalDurationMinutes));
+                        // Display total duration
+                        echo "<td>{$row['total_duration']}</td>";
 
-        echo "<td>{$formattedTotalDuration}</td>";
-        echo "</tr>";
-    }
+                        echo "</tr>";
+                    }
 
-    echo "</tbody>";
-    echo "</table>";
-    echo "</div>";
-    echo "</div>";
-} elseif ($isSearchConditionsSet) {
-    echo "<div class='mt-4'>";
-    echo "<p>No results found.</p>";
-    echo "</div>";
-}?>
+
+
+
+                    echo "</tbody>";
+                    echo "</table>";
+                    echo "</div>";
+                    echo "</div>";
+                } elseif ($isSearchConditionsSet) {
+                    echo "<div class='mt-4'>";
+                    echo "<p>No results found.</p>";
+                    echo "</div>";
+                } ?>
             </div>
         </div>
     </div>
