@@ -226,7 +226,7 @@ $stmtleaving->close();
                     <div class="card-header">
                         Leaving
                     </div>
-                    <div class="table-responsive" style="max-height:150px; overflow-y: auto;overflow-x: auto;">
+                    <div class="table-responsive" style="max-height:350px; overflow-y: auto;overflow-x: auto;">
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
@@ -265,7 +265,7 @@ $stmtleaving->close();
                     <div class="card-header">
                         Vacation
                     </div>
-                    <div class="table-responsive" style="max-height:150px; overflow-y: auto;">
+                    <div class="table-responsive" style="max-height:350px; overflow-y: auto;">
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
@@ -461,6 +461,11 @@ $stmtleaving->close();
             // Add 1 to include both the start and end dates
             return durationInDays + 1;
         }
+
+        // Reload the page every 5 minutes (300,000 milliseconds)
+  setInterval(function () {
+    location.reload();
+  }, 300000);
     </script>
 
 
