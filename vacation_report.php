@@ -49,20 +49,13 @@ if (!empty($dateTo)) {
     $isSearchConditionsSet = true;
 }
 
-if (is_array($selectedUsers)) {
+if (!empty($selectedUsers) && $selectedUsers[0] != '00') {
     // Convert each element to an integer
     $selectedUsers = array_map('intval', $selectedUsers);
-
     $placeholders = implode(',', array_fill(0, count($selectedUsers), '?'));
     $sql .= " AND users.id IN ($placeholders)";
     $paramTypes .= str_repeat("i", count($selectedUsers));
     $bindParams = array_merge($bindParams, $selectedUsers);
-} else {
-    // Handle the case when selectedUsers is not an array (possibly a single value)
-    $sql .= " AND users.id = ?";
-    $paramTypes .= "i";
-    // Convert the single value to an integer
-    $bindParams[] = intval($selectedUsers);
 }
 
 $isSearchConditionsSet = true;
@@ -127,7 +120,10 @@ $stmt->close();
                             <label for="searchInput">Choose the Users</label>
                             <div class="form-group d-flex justify-content-around">
                             <select id="select2" class="form-control mr-2" name="selectedUser[]" id="userDropdown" multiple="multiple">
+
                                           <?php
+                                        echo "<option value='00'>All</option>";
+
                                             foreach ($users as $user) {
                                                 echo "<option value='{$user['id']}'>{$user['name']}</option>";
                                             }

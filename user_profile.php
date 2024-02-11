@@ -281,7 +281,7 @@ $stmtleaving->close();
                                         <td><?php echo $vacation['vacation_from']; ?></td>
                                         <td><?php echo $vacation['vacation_to']; ?></td>
                                         <td><?php echo $vacation['duration']; ?> days</td>
-                                        <td><?php if ($leave['status'] == 1) {
+                                        <td><?php if ($vacation ['status'] == 1) {
                                                 echo '<span class="badge rounded-pill bg-success text-white">Accepted</span>';
                                             } else {
                                                 echo '<span class="badge rounded-pill bg-danger text-white">Not Accepted</span>';

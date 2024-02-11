@@ -42,18 +42,13 @@ if (!empty($dateTo)) {
     $bindParams[] = $dateTo;
     $isSearchConditionsSet = true;
 }
-
-if (!empty($selectedUsers)) {
-    $userConditions = implode(',', array_fill(0, count($selectedUsers), '?'));
-    $sql .= " AND working_hours.user_id IN ($userConditions)";
+if (!empty($selectedUsers) && $selectedUsers[0] != '00') {
+    // Convert each element to an integer
+    $selectedUsers = array_map('intval', $selectedUsers);
+    $placeholders = implode(',', array_fill(0, count($selectedUsers), '?'));
+    $sql .= " AND working_hours.user_id IN ($placeholders)";
     $paramTypes .= str_repeat("i", count($selectedUsers));
     $bindParams = array_merge($bindParams, $selectedUsers);
-} else {
-    // Handle the case when selectedUsers is not an array (possibly a single value)
-    $sql .= " AND working_hours.user_id = ?";
-    $paramTypes .= "i";
-    // Convert the single value to an integer
-    $bindParams[] = intval($selectedUsers);
 }
 
 // Group by and order by user_id, user_name
@@ -115,6 +110,8 @@ $stmt->close();
                             <div class="form-group d-flex justify-content-around">
                             <select id="select2" class="form-control mr-2" name="selectedUser[]" id="userDropdown" multiple="multiple">
                             <?php
+                            echo "<option value='00'>All</option>";
+
                             foreach ($users as $user) {
                                 $isSelected = isset($_GET['selectedUser']) && in_array($user['id'], $_GET['selectedUser']);
                                 echo "<option value='{$user['id']}' " . ($isSelected ? 'selected' : '') . ">{$user['name']}</option>";
