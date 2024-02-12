@@ -19,6 +19,28 @@ $today = date('Y-m-d');
 ?>
 
 <main class="container-fluid">
+    <!-- start Modal Reject Leave -->
+    <div class="modal fade" id="reject_leave" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header btn-color">
+                    <h5 class="modal-title" id="exampleModalLabel">Reject Leave</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span class="text-white" aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="user-details"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="reject_leave_button">Reject</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end Modal Reject Leave -->
+
     <!-- start Modal Accept Leave -->
     <div class="modal fade" id="accept_leave" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -58,8 +80,8 @@ $today = date('Y-m-d');
                                 <th>Duration</th>
                                 <th>Leaving Date</th>
                                 <th>Status</th>
-                                <th>Action</th> 
-                                
+                                <th>Action</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -75,19 +97,23 @@ $today = date('Y-m-d');
 
                                     <td>
                                         <?php
-                                        if ($user['status'] == 1) {
-                                            echo '<span class="badge rounded-pill bg-success text-white">Accepted</span>';
+                                        if ($user['status'] == 0) {
+                                        ?>
+                                            <button class="btn btn-sm rounded-pill badge bg-danger text-white" data-toggle="modal" data-target="#accept_leave" data-leave-id="<?= $user['leave_id'] ?>">Not Accepted</button>
+
+                                        <?php
+
                                         } else {
                                         ?>
-                                                     <button class="btn btn-sm rounded-pill badge bg-danger text-white" data-toggle="modal" data-target="#accept_leave" data-leave-id="<?= $user['leave_id'] ?>">Not Accepted</button>
+                                            <button class="btn btn-sm rounded-pill badge bg-success text-white" data-toggle="modal" data-target="#reject_leave" data-leave-id="<?= $user['leave_id'] ?>"> Accepted</button>
                                         <?php
                                         }
                                         ?>
-                                    </td> 
+                                    </td>
                                     <td>
-                                    <a href="update_user_leaving.php?id=<?= $user['id'] ?> & leave_id=<?= $user['leave_id'] ?> & leaving_date=<?= $user['leaving_date'] ?>" class="btn btn-sm btn-color">Update</a>
+                                        <a href="update_user_leaving.php?id=<?= $user['id'] ?> & leave_id=<?= $user['leave_id'] ?> & leaving_date=<?= $user['leaving_date'] ?>" class="btn btn-sm btn-color">Update</a>
 
-                                    <button class="btn btn-sm btn-danger" onclick="confirmDeleteLeave(<?= $user['id'] ?>, <?= $user['leave_id'] ?>)">Delete</button>
+                                        <button class="btn btn-sm btn-danger" onclick="confirmDeleteLeave(<?= $user['id'] ?>, <?= $user['leave_id'] ?>)">Delete</button>
 
                                     </td>
                                 </tr>
@@ -104,57 +130,86 @@ $today = date('Y-m-d');
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <script>
-$(document).ready(function () {
-    $('#accept_leave').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var leavingId = button.data('leave-id');
-        // alert(leavingId);
-        $('#accept_leave_button').data('leave-id',leavingId);
-        fetchLeavingData(leavingId);
+    $(document).ready(function() {
+        $('#accept_leave').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var leavingId = button.data('leave-id');
+            $('#accept_leave_button').data('leave-id', leavingId);
+            fetchLeavingData(leavingId, 'accept_leave');
+        });
+
+        $('#accept_leave_button').click(function() {
+            var leaveId = $(this).data('leave-id');
+            acceptOrRejectLeave(leaveId, 1);
+        });
+
+        $('#reject_leave').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var leavingId = button.data('leave-id');
+            $('#reject_leave_button').data('leave-id', leavingId);
+            fetchLeavingData(leavingId, 'reject_leave');
+        });
+
+        $('#reject_leave_button').click(function() {
+            var leaveId = $(this).data('leave-id');
+            acceptOrRejectLeave(leaveId, 0);
+        });
+
+
     });
 
-    $('#accept_leave_button').click(function () {
 
-        var leaveId = $(this).data('leave-id');
-       // alert(leaveId);
-        acceptLeave(leaveId);
-
-    });
-});
-
-
-function fetchLeavingData(leavingId) {
-    $.ajax({
-        url: 'fetch_leaving_details.php',
-        type: 'POST',
-        data: { leave_id: leavingId },
-        success: function (data) {
-            $('#user-details').html(data);
-        }
-    });
-}
-
-function acceptLeave(leaveId) {
-    $.ajax({
-        url: 'accept_leave.php',
-        type: 'POST',
-        data: { leave_id: leaveId },
-        success: function(data) {
-            console.log(data);
-            if (data.trim() === 'Leave request accepted successfully!') {
-                $('#accept_leave').modal('hide');
-                alert('Leave accepted successfully!');
-                location.reload();
-            } else {
-                console.log('Unexpected response from the server:', data);
+    function fetchLeavingData(leavingId) {
+        $.ajax({
+            url: 'fetch_leaving_details.php',
+            type: 'POST',
+            data: {
+                leave_id: leavingId
+            },
+            success: function(data) {
+                $('#user-details').html(data);
             }
-        },
-        error: function(error) {
-            console.log(error.responseText);
-        }
-    });
-}
-function confirmDeleteLeave(userId, leaveId) {
+        });
+    }
+
+    function fetchLeavingData(leavingId, modalId) {
+        $.ajax({
+            url: 'fetch_leaving_details.php',
+            type: 'POST',
+            data: {
+                leave_id: leavingId
+            },
+            success: function(data) {
+                $('#' + modalId + ' .modal-body #user-details').html(data);
+            }
+        });
+    }
+
+    function acceptOrRejectLeave(leaveId, status) {
+        $.ajax({
+            url: 'accept_leave.php',
+            type: 'POST',
+            data: {
+                leave_id: leaveId,
+                status: status
+            },
+            success: function(data) {
+                console.log(data);
+                if (data.trim() === 'Leave request accepted successfully!') {
+                    $('#' + (status === 1 ? 'accept_leave' : 'reject_leave')).modal('hide');
+                    alert('Leave ' + (status === 1 ? 'accepted' : 'rejected') + ' successfully!');
+                    location.reload();
+                } else {
+                    console.log('Unexpected response from the server:', data);
+                }
+            },
+            error: function(error) {
+                console.log(error.responseText);
+            }
+        });
+    }
+
+    function confirmDeleteLeave(userId, leaveId) {
         if (confirm('Are you sure you want to delete this leaving request?')) {
             deleteLeave(userId, leaveId);
         }
@@ -182,9 +237,6 @@ function confirmDeleteLeave(userId, leaveId) {
             }
         });
     }
-
-
-
 </script>
 
 <?php

@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
         $leaveDetails = $result->fetch_assoc();
-        echo "Are  you sure to accept the vacation ?";
+        echo "Are  you sure to update status of vacation ?";
     } else {
         echo "vacation request not found";
     }

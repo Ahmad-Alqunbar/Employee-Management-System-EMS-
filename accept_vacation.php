@@ -8,16 +8,18 @@ $conn = $db->getConnection();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get the user ID from the POST data
     $vacationId = $_POST['vacation_id'];
+    $vacationStatus = $_POST['status'];
+
     // echo $leaveId; 
     // exit();
 
     // Update the leave status to accepted (assuming you have a 'status' column)
-    $query = "UPDATE vacation SET status = 1 WHERE id = ?";
+    $query = "UPDATE vacation SET status = ? WHERE id = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param('i', $vacationId);
+    $stmt->bind_param('ii', $vacationStatus, $vacationId);
 
     if ($stmt->execute()) {
-        echo "vacation request accepted successfully!";
+        echo "Vacation request accepted successfully!";
     } else {
         echo "Error accepting vacation request";
     }

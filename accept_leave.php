@@ -8,13 +8,12 @@ $conn = $db->getConnection();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get the user ID from the POST data
     $leaveId = $_POST['leave_id'];
-    // echo $leaveId; 
-    // exit();
-
+    $leaveStatus = $_POST['status'];
+   
     // Update the leave status to accepted (assuming you have a 'status' column)
-    $query = "UPDATE leaving SET status = 1 WHERE id = ?";
+    $query = "UPDATE leaving SET status = ? WHERE id = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param('i', $leaveId);
+    $stmt->bind_param('ii', $leaveStatus, $leaveId);
 
     if ($stmt->execute()) {
         echo "Leave request accepted successfully!";

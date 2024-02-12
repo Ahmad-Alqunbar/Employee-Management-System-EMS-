@@ -16,6 +16,28 @@ while ($row = $resultUsersVacation->fetch_assoc()) {
 $today = date('Y-m-d');
 ?>
 <main class="container-fluid">
+    <!-- start Modal Reject Leave -->
+    <div class="modal fade" id="reject_vacation" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header btn-color">
+                    <h5 class="modal-title" id="exampleModalLabel">Reject Leave</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span class="text-white" aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="user-details"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="reject_vacation_button">Reject</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end Modal Reject Leave -->
+
     <!-- start Modal Accept vacation -->
     <div class="modal fade" id="accept_vacation" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -68,18 +90,19 @@ $today = date('Y-m-d');
                                     <td><?= $user['vacation_to'] ?></td>
                                     <td><?= $user['duration'] . "  Day" ?></td>
                                     <td><?= $user['created_at'] ?></td>
-
                                     <td>
                                         <?php
-                                        if ($user['status'] == 1) {
-                                            echo '<span class="badge rounded-pill bg-success text-white">Accepted</span>';
+                                        if ($user['status'] == 0) {
+                                            ?>
+                                                <button class="btn btn-sm rounded-pill badge bg-danger text-white" data-toggle="modal" data-target="#accept_vacation"  data-vacation-id="<?= $user['vacation_id'] ?>">Not Accepted</button>
+                                            <?php
                                         } else {
-                                        ?>
-                                            <button class="btn btn-sm rounded-pill badge bg-danger text-white" data-toggle="modal" data-target="#accept_vacation" data-vacation-id="<?= $user['vacation_id'] ?>">Not Accepted</button>
-                                        <?php
+                                            ?>
+                                                <button class="btn btn-sm rounded-pill badge bg-success text-white" data-toggle="modal" data-target="#reject_vacation"  data-vacation-id="<?= $user['vacation_id'] ?>"> Accepted</button>
+                                            <?php
                                         }
                                         ?>
-                                    </td>
+                                    </td> 
                                     <td>
                                         <a href="update_user_vacation.php?id=<?= $user['id'] ?>&vacation_id=<?= $user['vacation_id'] ?>&created_at=<?= $user['created_at'] ?>" class="btn btn-sm btn-color">Update</a>
                                         <button class="btn btn-sm btn-danger" onclick="confirmDelete(<?= $user['id'] ?>, <?= $user['vacation_id'] ?>)">Delete</button>
@@ -98,60 +121,76 @@ $today = date('Y-m-d');
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <script>
-    $(document).ready(function() {
-        $('#accept_vacation').on('show.bs.modal', function(event) {
+    $(document).ready(function () {
+        $('#accept_vacation').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             var vacationId = button.data('vacation-id');
-            // alert(leavingId);
             $('#accept_vacation_button').data('vacation-id', vacationId);
-            fetchLeavingData(vacationId);
+            fetchVacationData(vacationId, 'accept_vacation');
         });
 
-        $('#accept_vacation_button').click(function() {
-
+        $('#accept_vacation_button').click(function () {
             var vacationId = $(this).data('vacation-id');
-            // alert(leaveId);
-            acceptLeave(vacationId);
+            acceptOrRejectLeave(vacationId, 1);
+        });
 
+        $('#reject_vacation').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var vacationId = button.data('vacation-id');
+            $('#reject_vacation_button').data('vacation-id', vacationId);
+            fetchVacationData(vacationId, 'reject_vacation');
+        });
+
+        $('#reject_vacation_button').click(function () {
+            var vacationId = $(this).data('vacation-id');
+            acceptOrRejectLeave(vacationId, 0);
         });
     });
 
-
-    function fetchLeavingData(vacationId) {
+    function fetchVacationData(vacationId, modalId) {
         $.ajax({
             url: 'fetch_vacation_details.php',
             type: 'POST',
             data: {
                 vacation_id: vacationId
             },
-            success: function(data) {
-                $('#user-details').html(data);
+            success: function (data) {
+                $('#' + modalId + ' .modal-body #user-details').html(data);
             }
         });
     }
 
-    function acceptLeave(vacationId) {
-        $.ajax({
-            url: 'accept_vacation.php',
-            type: 'POST',
-            data: {
-                vacation_id: vacationId
-            },
-            success: function(data) {
-                console.log(data);
-                if (data.trim() === 'vacation request accepted successfully!') {
-                    $('#accept_vacation').modal('hide');
-                    alert('vacation accepted successfully!');
-                    location.reload();
-                } else {
-                    console.log('Unexpected response from the server:', data);
-                }
-            },
-            error: function(error) {
-                console.log(error.responseText);
+    function acceptOrRejectLeave(vacationId, status) {
+    $.ajax({
+        url: 'accept_vacation.php',
+        type: 'POST',
+        data: {
+            vacation_id: vacationId,
+            status: status
+        },
+        success: function (data) {
+            console.log(data);
+            if (data.trim() === 'Vacation request accepted successfully!' || data.trim() === 'Vacation request rejected successfully!') {
+                $('#accept_vacation, #reject_vacation').modal('hide');
+                alert('Leave ' + (status === 1 ? 'accepted' : 'rejected') + ' successfully!');
+                location.reload(true); // Reload the page by forcing a server request
+            } else {
+                console.log('Unexpected response from the server:', data);
             }
-        });
-    }
+        },
+        error: function (error) {
+            console.log(error.responseText);
+        },
+        complete: function () {
+            // This will ensure that the modal is hidden even in case of an error
+            $('#accept_vacation, #reject_vacation').modal('hide');
+        }
+    });
+}
+
+
+
+
 
     function confirmDelete(userId, vacationId) {
         if (confirm('Are you sure you want to delete this vacation?')) {
@@ -162,7 +201,7 @@ $today = date('Y-m-d');
                     user_id: userId,
                     vacation_id: vacationId
                 },
-                success: function(data) {
+                success: function (data) {
                     console.log(data);
                     if (data.trim() === 'vacation deleted successfully!') {
                         alert('Vacation deleted successfully!');
@@ -171,14 +210,14 @@ $today = date('Y-m-d');
                         console.log('Unexpected response from the server:', data);
                     }
                 },
-                error: function(error) {
+                error: function (error) {
                     console.log(error.responseText);
                 }
             });
         }
     }
-
 </script>
+
 <?php
 include_once 'layouts/footer.php';
 ?>
