@@ -11,6 +11,7 @@
 * [Contributing](#contributing)
 * [Contact](#contact)
 
+   
 ## General Information
 Employee Management System (EMS) is a web-based system designed to efficiently manage employee-related operations. It provides features for managing working hours, leaves, vacations, and more.
 
@@ -27,11 +28,13 @@ Employee Management System (EMS) is a web-based system designed to efficiently m
 - PHPMailer
 
 
+
 ## Features
 - **Working Hours Management:** Track and manage employee working hours.
 - **Leave and Vacation Requests:** Allow employees to request leaves and vacations.
 - **User Authentication:** Secure login and registration system.
 - **Profile Management:** Update user profiles with necessary information.
+
 
 ## Screenshots
 ![Dashboard](/asset/images/screen-shot/dashboard.png)
@@ -49,10 +52,12 @@ Employee Management System (EMS) is a web-based system designed to efficiently m
 ![Update Vacation](/asset/images/screen-shot/update_vacation.png)
 ![Delete Vacation ](/asset/images/screen-shot/delete_vacation.png)
 
+
 ## Setup
 1. Clone the repository: `git clone https://github.com/Ahmad-Alqunbar/Employee-Management-System-EMS-.git`
 2. Configure the database: Update `config/Database.php` with your database credentials.
 3. Import the database schema: Run the SQL script provided in `database.sql`.
+
 
 ## Usage
 1. Navigate to the project directory.
@@ -62,6 +67,7 @@ Employee Management System (EMS) is a web-based system designed to efficiently m
 ## Project Status
 Project is: _in progress_.
 
+
 ## Contributing
 Contributions are welcome! If you'd like to contribute, please follow these guidelines:
 1. Fork the repository.
@@ -70,6 +76,7 @@ Contributions are welcome! If you'd like to contribute, please follow these guid
 4. Sync your fork with the upstream main branch: `git pull upstream main`.
 5. Push to the branch: `git push origin feature-name`.
 6. Submit a pull request.
+
 
 ## Contact
 Created by [Ahmad Alqunbar](https://www.linkedin.com/in/ahmad-alqunbar/) - feel free to contact me at [ahmad.alqunbar97@gmail.com](mailto:ahmad.alqunbar97@gmail.com)!
