@@ -16,12 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param('ii', $leaveStatus, $leaveId);
 
     if ($stmt->execute()) {
-        echo "Leave request accepted successfully!";
+        echo " Leave request accepted successfully! ";
     } else {
-        echo "Error accepting leave request";
+        echo " Error accepting leave request ";
     }
-
-    // Close the database connection
     $stmt->close();
     $conn->close();
 }
