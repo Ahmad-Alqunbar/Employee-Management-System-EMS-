@@ -3,6 +3,10 @@
 
 </div>
 
+
+
+
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -14,6 +18,10 @@
 
   
 
+
+
+
+  
 $(document).ready(()=>{
   $('#open-sidebar').click(()=>{
       // add class active on #sidebar
